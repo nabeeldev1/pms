@@ -1,0 +1,43 @@
+.SigninFrom input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.SigninFrom input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.SigninFrom input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+.SigninFrom div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+.Form {
+    margin: 12px 12px 0 12px;
+}
+
+.SigninFrom h3 {
+    margin: 12px;
+}
+
+.FormErrors {
+    margin: 12px;
+    text-align: center;
+}
