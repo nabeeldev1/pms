@@ -1,0 +1,28 @@
+.Container {
+    display: flex;
+    background-color: #0079bf;
+}
+
+.AddButton {
+    border: none;
+    background-color: inherit;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-block;
+    color: dodgerblue;
+    margin: 5px 0 5px 50px;
+}
+
+.AddButton:hover {
+    background: #eee;
+}
+
+/* .Modal {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+} */

@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import classes from './Navbar.css';
 import { Route, Link, Switch } from 'react-router-dom';
 import Signin from '../Signin/Signin';
-import Layout from '../Layout/Layout';
+import Dashboard from '../Dashboard/Dashboard';
 import Logout from '../Logout/Logout';
 import Home from '../Home/Home';
 import PrivateRoute from '../PrivateRoute/PrivateRoute';
+import isLoggedIn from '../Auth/Auth'; 
 
-class Navbar extends Component {
-    render () {
-        let loggedIn, dashboard, logout, signin;
-        loggedIn = JSON.parse(localStorage.getItem('userObj')) ? true : false;
+const navbar = () => {
+        let dashboard, logout, signin;
 
-        if(loggedIn === true) {
+        if(isLoggedIn() === true) {
             logout = <li><Link to="/logout">Logout</Link></li>;
             dashboard = <li><Link to="/dashboard">Dashboard</Link></li>;
             signin = '';
@@ -37,13 +36,12 @@ class Navbar extends Component {
                 </header>
                 <Switch>
                     <Route path="/" exact component={Home} />
-                    <PrivateRoute authed={loggedIn} path="/dashboard" exact component={Layout} />
+                    <PrivateRoute authed={isLoggedIn()} path="/dashboard" exact component={Dashboard} />
                     <Route path="/signin" exact component={Signin} />
                     <Route path="/logout" exact component={Logout} />
                 </Switch>
             </div>
         );
-    }
 }
 
-export default Navbar;
+export default navbar;

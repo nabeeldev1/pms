@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classes from './Signin.css';
 import FormErrors from '../FormErrors/FormErrors';
+import { signin } from '../../Server/Server';
 
 class Signin extends Component {
     constructor(props) {
@@ -33,7 +34,7 @@ class Signin extends Component {
             break;
           case 'password':
             passwordValid = value.length >= 6;
-            fieldValidationErrors.password = passwordValid ? '': ' is too short';
+            fieldValidationErrors.password = passwordValid ? '': ' must be of at least 6 characters long.';
             break;
           default:
             break;
@@ -55,8 +56,9 @@ class Signin extends Component {
             email: this.state.email,
             token: '12345678'
         };
-        localStorage.setItem('userObj', JSON.stringify(user));
-        this.props.history.push('/dashboard');
+        if(signin(user)) {
+          this.props.history.push('/dashboard');
+        }
       }
     }
   
