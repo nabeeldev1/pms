@@ -12,7 +12,7 @@ const Container = styled.div`
 
     display: flex;
     flex-direction: column;
-    background-color: lightgrey;
+    background-color: white;
     overflow-y: scroll;
     max-height: 650px;
 `;
@@ -29,7 +29,7 @@ class Column extends Component {
     render() {
         return (
             <Container>
-                <div className={classes.Title}>{this.props.column.title}</div>
+                <div className={classes.Title}><b>{this.props.column.title}</b></div>
                 <Droppable droppableId={this.props.column.id}>
                     {(provided, snapshot) => (
                         <TaskList
@@ -37,7 +37,7 @@ class Column extends Component {
                             {...provided.droppableProps}
                             isDraggingOver={snapshot.isDraggingOver}
                         >
-                            {this.props.tasks.map((task, index) => <Task index={index} key={task.id} task={task} />)}
+                            {this.props.tasks.map((task, index) => <Task index={index} key={task.id} task={task} removeTask={() => this.props.removed(task.id, this.props.column.id)} />)}
                             {provided.placeholder}
                         </TaskList>
                     )}

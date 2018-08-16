@@ -12,34 +12,35 @@ const navbar = () => {
         let dashboard, logout, signin;
 
         if(isLoggedIn() === true) {
-            logout = <li><Link to="/logout">Logout</Link></li>;
-            dashboard = <li><Link to="/dashboard">Dashboard</Link></li>;
+            logout = <Link to="/logout">Logout</Link>;
+            dashboard = <Link to="/dashboard">Dashboard</Link>;
             signin = '';
         }
         else {
             logout = ''; 
             dashboard = '';
-            signin = <li><Link to="/signin">Sign in</Link></li>;
+            signin = <Link to="/signin">Sign in</Link>;
         }
 
         return (
             <div className={classes.Nav}>
-                <header>
-                    <nav>
-                        <ul>
-                            <li><Link to="/">Home</Link></li>
-                            {dashboard}
-                            {signin}
-                            {logout}
-                        </ul>    
-                    </nav>    
-                </header>
+                <div className={classes.NavHeader}>
+                    <div className={classes.NavTitle}>
+                        PMS
+                    </div>
+                </div>
+                <div className={classes.NavLinks}>
+                    <Link to="/">Home</Link>
+                    {dashboard}
+                    {signin}
+                    {logout}
+                </div>
                 <Switch>
                     <Route path="/" exact component={Home} />
                     <PrivateRoute authed={isLoggedIn()} path="/dashboard" exact component={Dashboard} />
                     <Route path="/signin" exact component={Signin} />
                     <Route path="/logout" exact component={Logout} />
-                </Switch>
+                 </Switch>
             </div>
         );
 }

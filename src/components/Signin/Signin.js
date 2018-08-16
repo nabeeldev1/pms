@@ -64,21 +64,17 @@ class Signin extends Component {
   
     render() {
       return (
-        <div className={classes.SigninFrom}>
-            <h3>Sign in to continue...</h3>
-            <hr />
-            <div className={classes.FormErrors}>
-                <FormErrors formErrors={this.state.formErrors} />
-            </div>
-            <form className={classes.Form} onSubmit={this.handleSubmit}> 
-                <label>Email</label>
-                <input type="email" id="email" name="email" placeholder="Your email.." value={this.state.email} onChange={this.handleChange} />
-
-                <label>Password</label>
-                <input type="password" id="password" name="password" placeholder="Your password.." value={this.state.password} onChange={this.handleChange} />
-
-                <input type="submit" disabled={!this.state.formValid} value="Login" />
-            </form>
+        <div className={classes.Login}>
+          <div className={classes.LoginTriangle}></div>
+          <h2 className={classes.LoginHeader}>Log in</h2>
+          <div style={{ textAlign: 'center' }}>
+            <FormErrors formErrors={this.state.formErrors} />
+          </div>
+          <form className={classes.LoginContainer} onSubmit={this.handleSubmit}>
+            <p><input type="email" id="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} /></p>
+            <p><input type="password" id="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} /></p>
+            <p><input type="submit" disabled={!this.state.formValid} value="Log in" /></p>
+          </form>
         </div>
       );
     }

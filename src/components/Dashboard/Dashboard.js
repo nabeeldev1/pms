@@ -145,32 +145,51 @@ class Dashboard extends Component {
 
     openModal = () => {
         this.setState({ modalIsOpen: true });
-      }
+    }
      
-      afterOpenModal = () => {
+    afterOpenModal = () => {
         this.subtitle.style.color = '#0079bf';
-      }
+    }
      
-      closeModal = () => {
+    closeModal = () => {
         this.setState({ modalIsOpen: false });
-      }
+    }
 
-      componentWillMount() {
+    componentWillMount() {
         Modal.setAppElement('body');
-     }
+    }
+
+    //Remove a particular task from column
+    removeTaskHandler = (taskId, columnId) => {
+        const selectedColumn = this.state.columns[columnId];
+        const index = selectedColumn.taskIds.indexOf(taskId);
+        if(index > -1) {
+            selectedColumn.taskIds.splice(index, 1);
+        }
+        //Delete the task from Tasks array too
+        delete this.state.tasks[taskId];
+
+        const newState = {
+            ...this.state,
+        }
+        this.setState(newState);
+    }
+
+    updateTaskHandler = (taskId, columnId) => {
+        console.log('-------Update-Task---------');
+    }
 
     render() {
         let isData = this.state.isDataLoaded;
         let dragDrop;
         if(isData) {
             dragDrop = <DragDropContext onDragEnd={this.onDragEnd}>
-                <h3 style={{ margin:'0 0 0 5px' }}>Dashboard</h3>
                 <div className={classes.Container}>
                     {this.state.columnOrder.map(columnId => {
                         const column = this.state.columns[columnId];
                         const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
                         
-                        return <Column key={column.id} column={column} tasks={tasks} />;
+                        return <Column key={column.id} column={column} tasks={tasks} removed={this.removeTaskHandler} />;
                     })}
                 </div>
                 <div>
@@ -189,7 +208,7 @@ class Dashboard extends Component {
                     onAfterOpen={this.afterOpenModal}
                     onRequestClose={this.closeModal}
                     style={customStyles}
-                    contentLabel="Example Modal"
+                    contentLabel="Add Task"
                 >
                     <h2 ref={subtitle => this.subtitle = subtitle}>Add Task</h2>
                     <form onSubmit={this.addTask}>
