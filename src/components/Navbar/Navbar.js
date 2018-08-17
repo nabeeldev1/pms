@@ -6,7 +6,7 @@ import Dashboard from '../Dashboard/Dashboard';
 import Logout from '../Logout/Logout';
 import Home from '../Home/Home';
 import PrivateRoute from '../PrivateRoute/PrivateRoute';
-import isLoggedIn from '../Auth/Auth'; 
+import { isLoggedIn } from '../../Utils/Auth/Auth'; 
 
 const navbar = () => {
         let dashboard, logout, signin;

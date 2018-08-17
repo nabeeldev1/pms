@@ -18,11 +18,42 @@
     background: #eee;
 }
 
-/* .Modal {
-    top: 50%;
-    left: 50%;
-    right: auto;
-    bottom: auto;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-} */
+.ModalInput {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    border-width: 1px;
+    border-style: solid;
+    padding: 16px;
+    outline: 0;
+    font-family: inherit;
+    font-size: 0.95em;
+  }
+
+  .ModalSubmit {
+    background: #0079bf;
+    border-color: transparent;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 10px;
+    float: right;
+  }
+  
+  .ModalSubmit:hover {
+    background: #17c;
+  }
+  
+  /* Buttons' focus effect */
+  .ModalSubmit:focus {
+    border-color: #05a;
+  }
+
+  .ModalCancel {
+    background:#CD5C5C;
+    border-color: transparent;
+    color: black;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 5px;
+    float: right;
+  }

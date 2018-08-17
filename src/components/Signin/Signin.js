@@ -66,14 +66,14 @@ class Signin extends Component {
       return (
         <div className={classes.Login}>
           <div className={classes.LoginTriangle}></div>
-          <h2 className={classes.LoginHeader}>Log in</h2>
+          <h2 className={classes.LoginHeader}>Sign in</h2>
           <div style={{ textAlign: 'center' }}>
             <FormErrors formErrors={this.state.formErrors} />
           </div>
           <form className={classes.LoginContainer} onSubmit={this.handleSubmit}>
             <p><input type="email" id="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} /></p>
             <p><input type="password" id="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} /></p>
-            <p><input type="submit" disabled={!this.state.formValid} value="Log in" /></p>
+            <p><input type="submit" disabled={!this.state.formValid} value="Sign in" /></p>
           </form>
         </div>
       );

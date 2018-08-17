@@ -22,6 +22,8 @@ class Dashboard extends Component {
         this.state = {};
         this.state.modalIsOpen = false;
         this.state.isDataLoaded = false;
+        this.state.taskContent = '';
+        this.state.taskId = '';
     }
 
     componentDidMount() {
@@ -114,7 +116,7 @@ class Dashboard extends Component {
 
     //Add new task to "To do" column
     addTask = (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         const taskContent = event.target.newTask.value;
         let columns = {...this.state.columns};
         let allTasks = {...this.state.tasks};
@@ -137,7 +139,8 @@ class Dashboard extends Component {
         const newState = {
             ...this.state,
             columns: columns,
-            tasks: allTasks
+            tasks: allTasks,
+            taskContent: ''
         };
         this.setState(newState);
         this.closeModal();
@@ -174,9 +177,39 @@ class Dashboard extends Component {
         }
         this.setState(newState);
     }
+    
+    //update the state with the selected task's id and content
+    updateTask = (taskId, content) => {
+        this.setState({ taskId: taskId, taskContent: content });
+        this.openModal();
+    }
 
-    updateTaskHandler = (taskId, columnId) => {
-        console.log('-------Update-Task---------');
+    updateTaskHandler = (event) => {
+        const id = this.state.taskId;
+        const newState = {
+            ...this.state
+        }
+        newState.tasks[id].content = this.state.taskContent;
+        this.setState({
+            newState,
+            taskId: '',
+            taskContent: ''
+        });
+        this.closeModal();
+    }
+
+    handleChange = (event) => {
+        this.setState({ taskContent: event.target.value });
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+        if(event.target.taskId.value) {
+            this.updateTaskHandler(event);
+        }
+        else {
+            this.addTask(event);
+        }
     }
 
     render() {
@@ -189,7 +222,7 @@ class Dashboard extends Component {
                         const column = this.state.columns[columnId];
                         const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
                         
-                        return <Column key={column.id} column={column} tasks={tasks} removed={this.removeTaskHandler} />;
+                        return <Column key={column.id} column={column} tasks={tasks} updated={this.updateTask} removed={this.removeTaskHandler} />;
                     })}
                 </div>
                 <div>
@@ -210,12 +243,13 @@ class Dashboard extends Component {
                     style={customStyles}
                     contentLabel="Add Task"
                 >
-                    <h2 ref={subtitle => this.subtitle = subtitle}>Add Task</h2>
-                    <form onSubmit={this.addTask}>
+                    <h2 ref={subtitle => this.subtitle = subtitle}>{this.state.taskId ? 'Edit Task' : 'Add Task'}</h2>
+                    <form onSubmit={this.handleSubmit}>
+                        <input type="hidden" id="taskId" name="taskId" value={this.state.taskId} />
                         <label>Description: </label>
-                        <input type="text" id="newTask" name="newTask" placeholder="Task description..." />
-                        <input type="submit" value="save" />
-                        <input type="button" value="close" onClick={this.closeModal} />
+                        <input className={classes.ModalInput} type="text" id="newTask" name="newTask" onChange={this.handleChange} value={this.state.taskContent} placeholder="Task description..." />
+                        <input className={classes.ModalCancel} type="button" value="Cancel" onClick={this.closeModal} />
+                        <input className={classes.ModalSubmit} type="submit" value="save" />
                     </form>
                 </Modal>               
             </div>

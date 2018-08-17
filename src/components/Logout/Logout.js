@@ -1,12 +1,14 @@
 import React from 'react';
 import  { Redirect } from 'react-router-dom';
+import { isLogout } from '../../Utils/Auth/Auth';
 
 const logout = () => {
-    localStorage.removeItem('userObj');
-
-    return (
-        <Redirect to='/signin'  />
-    );
+    const  loggedOut = isLogout();
+    if(loggedOut) {
+        return (
+            <Redirect to='/signin'  />
+        );
+    }
 };
 
 export default logout;

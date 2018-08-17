@@ -37,7 +37,7 @@ class Column extends Component {
                             {...provided.droppableProps}
                             isDraggingOver={snapshot.isDraggingOver}
                         >
-                            {this.props.tasks.map((task, index) => <Task index={index} key={task.id} task={task} removeTask={() => this.props.removed(task.id, this.props.column.id)} />)}
+                            {this.props.tasks.map((task, index) => <Task index={index} key={task.id} task={task} updateTask={() => this.props.updated(task.id, task.content)} removeTask={() => this.props.removed(task.id, this.props.column.id)} />)}
                             {provided.placeholder}
                         </TaskList>
                     )}
