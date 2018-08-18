@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import classes from './Signin.css';
 import FormErrors from '../FormErrors/FormErrors';
-import { signin } from '../../Server/Server';
+// import { signin } from '../../Server/Server';
+import axios from 'axios';
+import config from '../../config';
 
 class Signin extends Component {
     constructor(props) {
@@ -54,11 +56,19 @@ class Signin extends Component {
       if(this.state.emailValid && this.state.passwordValid) {
         const user = {
             email: this.state.email,
-            token: '12345678'
+            password: this.state.password
         };
-        if(signin(user)) {
-          this.props.history.push('/dashboard');
-        }
+        
+        axios.post(config.BASE_URL + 'users', user)
+          .then(Response => {
+            let userObj = Response.data;
+            delete userObj.password;
+            localStorage.setItem('userObj', JSON.stringify(userObj));            
+            this.props.history.push('/dashboard');
+          })
+          .catch(err => {
+            console.log(err);
+          });
       }
     }
   
