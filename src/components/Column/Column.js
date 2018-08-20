@@ -30,14 +30,14 @@ class Column extends Component {
         return (
             <Container>
                 <div className={classes.Title}><b>{this.props.column.title}</b></div>
-                <Droppable droppableId={this.props.column.id}>
+                <Droppable droppableId={this.props.column._id}>
                     {(provided, snapshot) => (
                         <TaskList
                             innerRef={provided.innerRef} 
                             {...provided.droppableProps}
                             isDraggingOver={snapshot.isDraggingOver}
                         >
-                            {this.props.tasks.map((task, index) => <Task index={index} key={task.id} task={task} updateTask={() => this.props.updated(task.id, task.content)} removeTask={() => this.props.removed(task.id, this.props.column.id)} />)}
+                            {this.props.tasks.map((task, index) => <Task index={index} key={task._id} task={task} updateTask={() => this.props.updated(task._id, task.content)} removeTask={() => this.props.removed(task._id, this.props.column._id)} />)}
                             {provided.placeholder}
                         </TaskList>
                     )}

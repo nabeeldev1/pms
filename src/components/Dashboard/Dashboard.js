@@ -3,7 +3,9 @@ import Column from '../Column/Column';
 import { DragDropContext } from 'react-beautiful-dnd';
 import classes from './Dashboard.css';
 import Modal from 'react-modal';
-import  { getData } from '../../Server/Server';
+// import  { getData } from '../../Server/Server';
+import axios from 'axios';
+import config from '../../config';
 
 const customStyles = {
     content : {
@@ -27,18 +29,47 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        if(this.getInitialData()) {
-            this.setState(this.getInitialData());
-            this.setState({isDataLoaded : true});
-        }
+        axios.get(config.BASE_URL + 'column-orders')
+          .then(colResponse => {
+            //   this.setState({ columnOrder: Response.data });
+              axios.get(config.BASE_URL + 'tasks')
+                .then(taskResponse => {
+                    axios.get(config.BASE_URL + 'columns')
+                        .then(columnResponse => {
+                            // console.log(Response);
+                            this.setState({ 
+                                columnOrder: colResponse.data,
+                                tasks: taskResponse.data,
+                                columns: columnResponse.data,
+                                isDataLoaded: true 
+                            });
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            // console.log(Response);
+          })
+          .catch(err => {
+            console.log(err);
+        });
+        
     }
 
-    getInitialData() {
-        return getData();
-    }
+    // getInitialData() {
+    //     return getData();
+    // }
 
     onDragEnd = result => {
         const { destination, source, draggableId } = result;
+        // console.log(destination);
+        // console.log(source);
+        // console.log(draggableId);
+        // console.log(this.state.columns);
+        
 
         if(!destination) {
             return;
@@ -48,11 +79,26 @@ class Dashboard extends Component {
             return;
         }
 
-        const start = this.state.columns[source.droppableId];
-        const finish = this.state.columns[destination.droppableId];
+        let start, finish;
+        for(let i=0; i < this.state.columns.length; i++) {
+            if( this.state.columns[i]._id === source.droppableId ) {
+                start = this.state.columns[i];
+            }
+            if( this.state.columns[i]._id === destination.droppableId ) {
+                finish = this.state.columns[i];
+            }
+        }
+        // const finish = this.state.columns[destination.droppableId];
+        // console.log(finish);
+        console.log('---Start---');
+        console.log(start);
+        console.log('---Finish---');
+        console.log(finish);
 
         if(start === finish) {
             const newTaskIds = Array.from(start.taskIds);
+            console.log('===newTaskIds===');
+            console.log(newTaskIds);
             newTaskIds.splice(source.index, 1);
             newTaskIds.splice(destination.index,0, draggableId);
 
@@ -213,17 +259,37 @@ class Dashboard extends Component {
     }
 
     render() {
+        // console.log(this.state);
         let isData = this.state.isDataLoaded;
         let dragDrop;
         if(isData) {
             dragDrop = <DragDropContext onDragEnd={this.onDragEnd}>
                 <div className={classes.Container}>
-                    {this.state.columnOrder.map(columnId => {
+                    {
+                        this.state.columnOrder[0].columnOrder.map((col, index) => {
+                            if(this.state.columns[index]._id === col) {
+                                const column = this.state.columns[index];
+                                const tasks = column.taskIds.map((taskId, index) => { return this.state.tasks[index] });
+                                return <Column 
+                                            key={column._id} 
+                                            column={column} 
+                                            tasks={tasks} 
+                                            updated={this.updateTask} 
+                                            removed={this.removeTaskHandler}
+                                        />;
+                            }
+                        })
+                    }
+
+
+                    {/* {this.state.columnOrder.map(columnId => {
                         const column = this.state.columns[columnId];
+                        console.log('----Column----');
+                        console.log(column);
                         const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
                         
                         return <Column key={column.id} column={column} tasks={tasks} updated={this.updateTask} removed={this.removeTaskHandler} />;
-                    })}
+                    })} */}
                 </div>
                 <div>
                     <button className={classes.AddButton} onClick={this.openModal}> Add Task </button>        
