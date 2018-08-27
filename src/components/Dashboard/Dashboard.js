@@ -31,12 +31,10 @@ class Dashboard extends Component {
     componentDidMount() {
         axios.get(config.BASE_URL + 'column-orders')
           .then(colResponse => {
-            //   this.setState({ columnOrder: Response.data });
               axios.get(config.BASE_URL + 'tasks')
                 .then(taskResponse => {
                     axios.get(config.BASE_URL + 'columns')
                         .then(columnResponse => {
-                            // console.log(Response);
                             this.setState({ 
                                 columnOrder: colResponse.data,
                                 tasks: taskResponse.data,
@@ -51,7 +49,6 @@ class Dashboard extends Component {
                 .catch(err => {
                     console.log(err);
                 });
-            // console.log(Response);
           })
           .catch(err => {
             console.log(err);
@@ -59,17 +56,8 @@ class Dashboard extends Component {
         
     }
 
-    // getInitialData() {
-    //     return getData();
-    // }
-
     onDragEnd = result => {
         const { destination, source, draggableId } = result;
-        // console.log(destination);
-        // console.log(source);
-        // console.log(draggableId);
-        // console.log(this.state.columns);
-        
 
         if(!destination) {
             return;
@@ -78,6 +66,8 @@ class Dashboard extends Component {
         if(destination.droppableId === source.droppableId && destination.index === source.index) {
             return;
         }
+
+        console.log(source);
 
         let start, finish;
         for(let i=0; i < this.state.columns.length; i++) {
@@ -95,100 +85,83 @@ class Dashboard extends Component {
         console.log('---Finish---');
         console.log(finish);
 
-        if(start === finish) {
-            const newTaskIds = Array.from(start.taskIds);
-            console.log('===newTaskIds===');
-            console.log(newTaskIds);
-            newTaskIds.splice(source.index, 1);
-            newTaskIds.splice(destination.index,0, draggableId);
+        // if(start === finish) {
+        //     const newTaskIds = Array.from(start.taskIds);
+        //     console.log('===newTaskIds===');
+        //     console.log(newTaskIds);
+        //     newTaskIds.splice(source.index, 1);
+        //     newTaskIds.splice(destination.index,0, draggableId);
 
-            const newColumn = {
-                ...start,
-                taskIds: newTaskIds,
-            };
+        //     const newColumn = {
+        //         ...start,
+        //         taskIds: newTaskIds,
+        //     };
 
-            const newState = {
-                ...this.state,
-                columns: {
-                    ...this.state.columns,
-                    [newColumn.id]: newColumn,
-                },
-            };
+        //     const newState = {
+        //         ...this.state,
+        //         columns: {
+        //             ...this.state.columns,
+        //             [newColumn.id]: newColumn,
+        //         },
+        //     };
 
-            this.setState(newState);
-            return;
-        }
+        //     this.setState(newState);
+        //     return;
+        // }
 
-        //Move to other Columns
-        const startTaskIds = Array.from(start.taskIds);
-        startTaskIds.splice(source.index,1);
-        const newStart = {
-            ...start,
-            taskIds: startTaskIds,
-        };
+        // //Move to other Columns
+        // const startTaskIds = Array.from(start.taskIds);
+        // startTaskIds.splice(source.index,1);
+        // const newStart = {
+        //     ...start,
+        //     taskIds: startTaskIds,
+        // };
 
-        const finishTaskIds = Array.from(finish.taskIds);
-        finishTaskIds.splice(destination.index, 0, draggableId);
-        const newFinish = {
-            ...finish,
-            taskIds: finishTaskIds,
-        };
+        // const finishTaskIds = Array.from(finish.taskIds);
+        // finishTaskIds.splice(destination.index, 0, draggableId);
+        // const newFinish = {
+        //     ...finish,
+        //     taskIds: finishTaskIds,
+        // };
 
-        const newState = {
-            ...this.state,
-            columns: {
-                ...this.state.columns,
-                [newStart.id]: newStart,
-                [newFinish.id]: newFinish,
-            },
-        };
+        // const newState = {
+        //     ...this.state,
+        //     columns: {
+        //         ...this.state.columns,
+        //         [newStart.id]: newStart,
+        //         [newFinish.id]: newFinish,
+        //     },
+        // };
 
-        this.setState(newState);   
+        // this.setState(newState);   
         return;
     };
 
-    //Generate Id for new task
-    generateTaskId(columns) {
-        let numberOfTasks = 0;
-        let totalColumns = Object.keys( columns )
-        .map( key => {
-            return [...Array( columns[key].taskIds.length )];
-        } );
-        for(let i=0; i < totalColumns.length; i++) {
-            numberOfTasks = totalColumns[i].length + numberOfTasks;
-        }
-        return numberOfTasks + 1;
-    }
-
     //Add new task to "To do" column
     addTask = (event) => {
-        // event.preventDefault();
-        const taskContent = event.target.newTask.value;
-        let columns = {...this.state.columns};
-        let allTasks = {...this.state.tasks};
-        
-        let generatedTaskId = this.generateTaskId(columns);
-        generatedTaskId = 'task-' + generatedTaskId; 
-        //New task object to be added
-        var key = generatedTaskId;
-        let taskObj = {
-            [key]: 
-                {
-                    id: generatedTaskId,
-                    content: taskContent,
-                    createdBy: "Nabeel"
-                }
+        let newState = {};
+        let taskArray = [...this.state.tasks];
+        let columnsArray = [...this.state.columns];
+        const task = {
+            "content": event.target.newTask.value,
+            "createdBy": "Nabeel" 
         };
-        allTasks = Object.assign(allTasks, taskObj);
-        columns["column-1"].taskIds.push(generatedTaskId);
 
-        const newState = {
-            ...this.state,
-            columns: columns,
-            tasks: allTasks,
-            taskContent: ''
-        };
-        this.setState(newState);
+        axios.post(config.BASE_URL + 'tasks/add', task)
+            .then(Response => {
+                taskArray.push(Response.data.taskResponse);
+                columnsArray[0].taskIds.push(Response.data.columnResponse);
+                newState = {
+                    ...this.state,
+                    columns: columnsArray,
+                    tasks: taskArray,
+                    taskContent: ''
+                };
+                this.setState(newState);
+            })
+            .catch(err => {
+                console.log(err);
+            });
         this.closeModal();
     }
 
@@ -210,18 +183,22 @@ class Dashboard extends Component {
 
     //Remove a particular task from column
     removeTaskHandler = (taskId, columnId) => {
-        const selectedColumn = this.state.columns[columnId];
-        const index = selectedColumn.taskIds.indexOf(taskId);
-        if(index > -1) {
-            selectedColumn.taskIds.splice(index, 1);
-        }
-        //Delete the task from Tasks array too
-        delete this.state.tasks[taskId];
-
-        const newState = {
-            ...this.state,
-        }
-        this.setState(newState);
+        axios.get(config.BASE_URL + 'tasks/' + taskId + '/' + columnId)
+            .then(Response => {
+                let newState = {
+                    ...this.state
+                };
+                newState.columns.map((column, index) => {
+                    if(column._id === columnId) {
+                        newState.columns[index] = Response.data.columnResponse;
+                        newState.tasks = Response.data.taskResponse;
+                    }
+                });
+                this.setState(newState);
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
     
     //update the state with the selected task's id and content
@@ -232,15 +209,26 @@ class Dashboard extends Component {
 
     updateTaskHandler = (event) => {
         const id = this.state.taskId;
-        const newState = {
-            ...this.state
-        }
-        newState.tasks[id].content = this.state.taskContent;
-        this.setState({
-            newState,
-            taskId: '',
-            taskContent: ''
-        });
+        const taskContent = { content : this.state.taskContent };
+        let taskArray = this.state.tasks;
+        axios.post(config.BASE_URL + 'tasks/' + id, taskContent)
+            .then(Response => {
+                this.state.tasks.map((task, index) => {
+                    if(task._id === id) {                
+                        taskArray[index].content = Response.data.content;
+                        let newState = {
+                            ...this.state,
+                            tasks: taskArray,
+                            taskContent: '',
+                            taskId: ''
+                        };
+                        this.setState(newState);        
+                    }
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
         this.closeModal();
     }
 
@@ -259,7 +247,6 @@ class Dashboard extends Component {
     }
 
     render() {
-        // console.log(this.state);
         let isData = this.state.isDataLoaded;
         let dragDrop;
         if(isData) {
@@ -267,6 +254,7 @@ class Dashboard extends Component {
                 <div className={classes.Container}>
                     {
                         this.state.columnOrder[0].columnOrder.map((col, index) => {
+                            // console.log(this.state.columns);
                             if(this.state.columns[index]._id === col) {
                                 const column = this.state.columns[index];
                                 const tasks = column.taskIds.map((taskId, index) => { return this.state.tasks[index] });
