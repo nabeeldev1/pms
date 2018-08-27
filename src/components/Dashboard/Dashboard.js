@@ -183,7 +183,7 @@ class Dashboard extends Component {
 
     //Remove a particular task from column
     removeTaskHandler = (taskId, columnId) => {
-        axios.get(config.BASE_URL + 'tasks/' + taskId + '/' + columnId)
+        axios.delete(config.BASE_URL + 'tasks/' + taskId + '/' + columnId)
             .then(Response => {
                 let newState = {
                     ...this.state
@@ -211,7 +211,7 @@ class Dashboard extends Component {
         const id = this.state.taskId;
         const taskContent = { content : this.state.taskContent };
         let taskArray = this.state.tasks;
-        axios.post(config.BASE_URL + 'tasks/' + id, taskContent)
+        axios.put(config.BASE_URL + 'tasks/' + id, taskContent)
             .then(Response => {
                 this.state.tasks.map((task, index) => {
                     if(task._id === id) {                
