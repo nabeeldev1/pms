@@ -85,6 +85,24 @@ class Dashboard extends Component {
         console.log('---Finish---');
         console.log(finish);
 
+        const data = {
+            start: start._id,
+            finish: finish._id,
+            taskId: draggableId
+        };
+        axios.post(config.BASE_URL + 'tasks/drag/', data)
+            .then(Response => {
+                console.log(Response);
+                const newState = {
+                    ...this.state,
+                    columns: Response.data
+                };
+                this.setState(newState);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
         // if(start === finish) {
         //     const newTaskIds = Array.from(start.taskIds);
         //     console.log('===newTaskIds===');
@@ -150,11 +168,13 @@ class Dashboard extends Component {
         axios.post(config.BASE_URL + 'tasks/add', task)
             .then(Response => {
                 taskArray.push(Response.data.taskResponse);
-                columnsArray[0].taskIds.push(Response.data.columnResponse);
+                columnsArray[0].taskIds = Response.data.columnResponse.taskIds;
+
                 newState = {
                     ...this.state,
                     columns: columnsArray,
                     tasks: taskArray,
+                    taskId: '',
                     taskContent: ''
                 };
                 this.setState(newState);
@@ -249,6 +269,7 @@ class Dashboard extends Component {
     render() {
         let isData = this.state.isDataLoaded;
         let dragDrop;
+        console.log(this.state);
         if(isData) {
             dragDrop = <DragDropContext onDragEnd={this.onDragEnd}>
                 <div className={classes.Container}>
