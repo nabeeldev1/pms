@@ -29,6 +29,7 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
+        console.log('------2-Did-Mount-------');
         axios.get(config.BASE_URL + 'column-orders')
           .then(colResponse => {
               axios.get(config.BASE_URL + 'tasks')
@@ -53,7 +54,9 @@ class Dashboard extends Component {
           .catch(err => {
             console.log(err);
         });
-        
+
+        console.log('--------3-State--------');
+        console.log(this.state);
     }
 
     onDragEnd = result => {
@@ -67,7 +70,7 @@ class Dashboard extends Component {
             return;
         }
 
-        console.log(source);
+        // console.log(source);
 
         let start, finish;
         for(let i=0; i < this.state.columns.length; i++) {
@@ -80,10 +83,10 @@ class Dashboard extends Component {
         }
         // const finish = this.state.columns[destination.droppableId];
         // console.log(finish);
-        console.log('---Start---');
-        console.log(start);
-        console.log('---Finish---');
-        console.log(finish);
+        // console.log('---Start---');
+        // console.log(start);
+        // console.log('---Finish---');
+        // console.log(finish);
 
         const data = {
             start: start._id,
@@ -97,6 +100,9 @@ class Dashboard extends Component {
                     ...this.state,
                     columns: Response.data
                 };
+                console.log('------newState---------');
+                console.log(newState);
+                console.log('-----------------------');
                 this.setState(newState);
             })
             .catch(err => {
@@ -127,32 +133,44 @@ class Dashboard extends Component {
         //     return;
         // }
 
-        // //Move to other Columns
+        //Move to other Columns
         // const startTaskIds = Array.from(start.taskIds);
+        // console.log('---startTaskIds---');
+        // console.log(startTaskIds);
         // startTaskIds.splice(source.index,1);
         // const newStart = {
         //     ...start,
         //     taskIds: startTaskIds,
         // };
+        // console.log('----new-start----');
+        // console.log(newStart);
 
         // const finishTaskIds = Array.from(finish.taskIds);
+        // console.log('---finishTaskIds---');
+        // console.log(finishTaskIds);
         // finishTaskIds.splice(destination.index, 0, draggableId);
         // const newFinish = {
         //     ...finish,
         //     taskIds: finishTaskIds,
         // };
 
+        // console.log('----new-finish----');
+        // console.log(newFinish);
+
+
         // const newState = {
         //     ...this.state,
         //     columns: {
         //         ...this.state.columns,
-        //         [newStart.id]: newStart,
-        //         [newFinish.id]: newFinish,
+        //         [newStart._id]: newStart,
+        //         [newFinish._id]: newFinish,
         //     },
         // };
+        // console.log('--------current-state--------');
+        // console.log(newState);
 
         // this.setState(newState);   
-        return;
+        // return;
     };
 
     //Add new task to "To do" column
@@ -269,16 +287,25 @@ class Dashboard extends Component {
     render() {
         let isData = this.state.isDataLoaded;
         let dragDrop;
-        console.log(this.state);
+        // console.log('------1-Render-State------');
+        // console.log(this.state);
+        // console.log('-------------------------');
         if(isData) {
             dragDrop = <DragDropContext onDragEnd={this.onDragEnd}>
                 <div className={classes.Container}>
                     {
                         this.state.columnOrder[0].columnOrder.map((col, index) => {
-                            // console.log(this.state.columns);
+                            // console.log(col);
                             if(this.state.columns[index]._id === col) {
+                                console.log(`Index : ${index}`)
                                 const column = this.state.columns[index];
-                                const tasks = column.taskIds.map((taskId, index) => { return this.state.tasks[index] });
+                                console.log(column);
+                                const tasks = column.taskIds.map((taskId, taskIndex) => { 
+                                    console.log(taskIndex);
+                                    console.log(this.state.tasks[taskIndex]);
+                                    console.log('==========================');
+                                    return this.state.tasks[taskIndex] 
+                                });
                                 return <Column 
                                             key={column._id} 
                                             column={column} 

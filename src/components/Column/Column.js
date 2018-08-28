@@ -27,6 +27,8 @@ const TaskList = styled.div`
 
 class Column extends Component {
     render() {
+        // console.log('----props-tasks-----');
+        // console.log(this.props.tasks);
         return (
             <Container>
                 <div className={classes.Title}><b>{this.props.column.title}</b></div>
@@ -37,7 +39,7 @@ class Column extends Component {
                             {...provided.droppableProps}
                             isDraggingOver={snapshot.isDraggingOver}
                         >
-                            {this.props.tasks.map((task, index) => <Task index={index} key={task._id} task={task} updateTask={() => this.props.updated(task._id, task.content)} removeTask={() => this.props.removed(task._id, this.props.column._id)} />)}
+                            {this.props.tasks.map((task, index) =>  <Task index={index} key={task._id} task={task} updateTask={() => this.props.updated(task._id, task.content)} removeTask={() => this.props.removed(task._id, this.props.column._id)} />)}
                             {provided.placeholder}
                         </TaskList>
                     )}
