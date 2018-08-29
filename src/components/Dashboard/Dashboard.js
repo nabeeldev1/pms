@@ -6,6 +6,7 @@ import Modal from 'react-modal';
 // import  { getData } from '../../Server/Server';
 import axios from 'axios';
 import config from '../../config';
+import { getHeaders } from '../../Utils/Auth/Auth'; 
 
 const customStyles = {
     content : {
@@ -29,12 +30,12 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        console.log('------2-Did-Mount-------');
-        axios.get(config.BASE_URL + 'column-orders')
+        const headers = getHeaders();
+        axios.get(config.BASE_URL + 'column-orders', {headers})
           .then(colResponse => {
-              axios.get(config.BASE_URL + 'tasks')
+              axios.get(config.BASE_URL + 'tasks', {headers})
                 .then(taskResponse => {
-                    axios.get(config.BASE_URL + 'columns')
+                    axios.get(config.BASE_URL + 'columns', {headers})
                         .then(columnResponse => {
                             this.setState({ 
                                 columnOrder: colResponse.data,
@@ -54,14 +55,11 @@ class Dashboard extends Component {
           .catch(err => {
             console.log(err);
         });
-
-        console.log('--------3-State--------');
-        console.log(this.state);
     }
 
     onDragEnd = result => {
         const { destination, source, draggableId } = result;
-
+        const headers = getHeaders();
         if(!destination) {
             return;
         }
@@ -69,8 +67,6 @@ class Dashboard extends Component {
         if(destination.droppableId === source.droppableId && destination.index === source.index) {
             return;
         }
-
-        // console.log(source);
 
         let start, finish;
         for(let i=0; i < this.state.columns.length; i++) {
@@ -81,96 +77,22 @@ class Dashboard extends Component {
                 finish = this.state.columns[i];
             }
         }
-        // const finish = this.state.columns[destination.droppableId];
-        // console.log(finish);
-        // console.log('---Start---');
-        // console.log(start);
-        // console.log('---Finish---');
-        // console.log(finish);
-
         const data = {
             start: start._id,
             finish: finish._id,
             taskId: draggableId
         };
-        axios.post(config.BASE_URL + 'tasks/drag/', data)
+        axios.post(config.BASE_URL + 'tasks/drag/', data, {headers})
             .then(Response => {
-                console.log(Response);
                 const newState = {
                     ...this.state,
                     columns: Response.data
                 };
-                console.log('------newState---------');
-                console.log(newState);
-                console.log('-----------------------');
                 this.setState(newState);
             })
             .catch(err => {
                 console.log(err);
             });
-
-        // if(start === finish) {
-        //     const newTaskIds = Array.from(start.taskIds);
-        //     console.log('===newTaskIds===');
-        //     console.log(newTaskIds);
-        //     newTaskIds.splice(source.index, 1);
-        //     newTaskIds.splice(destination.index,0, draggableId);
-
-        //     const newColumn = {
-        //         ...start,
-        //         taskIds: newTaskIds,
-        //     };
-
-        //     const newState = {
-        //         ...this.state,
-        //         columns: {
-        //             ...this.state.columns,
-        //             [newColumn.id]: newColumn,
-        //         },
-        //     };
-
-        //     this.setState(newState);
-        //     return;
-        // }
-
-        //Move to other Columns
-        // const startTaskIds = Array.from(start.taskIds);
-        // console.log('---startTaskIds---');
-        // console.log(startTaskIds);
-        // startTaskIds.splice(source.index,1);
-        // const newStart = {
-        //     ...start,
-        //     taskIds: startTaskIds,
-        // };
-        // console.log('----new-start----');
-        // console.log(newStart);
-
-        // const finishTaskIds = Array.from(finish.taskIds);
-        // console.log('---finishTaskIds---');
-        // console.log(finishTaskIds);
-        // finishTaskIds.splice(destination.index, 0, draggableId);
-        // const newFinish = {
-        //     ...finish,
-        //     taskIds: finishTaskIds,
-        // };
-
-        // console.log('----new-finish----');
-        // console.log(newFinish);
-
-
-        // const newState = {
-        //     ...this.state,
-        //     columns: {
-        //         ...this.state.columns,
-        //         [newStart._id]: newStart,
-        //         [newFinish._id]: newFinish,
-        //     },
-        // };
-        // console.log('--------current-state--------');
-        // console.log(newState);
-
-        // this.setState(newState);   
-        // return;
     };
 
     //Add new task to "To do" column
@@ -183,7 +105,8 @@ class Dashboard extends Component {
             "createdBy": "Nabeel" 
         };
 
-        axios.post(config.BASE_URL + 'tasks/add', task)
+        const headers = getHeaders();
+        axios.post(config.BASE_URL + 'tasks/add', task, {headers})
             .then(Response => {
                 taskArray.push(Response.data.taskResponse);
                 columnsArray[0].taskIds = Response.data.columnResponse.taskIds;
@@ -221,7 +144,8 @@ class Dashboard extends Component {
 
     //Remove a particular task from column
     removeTaskHandler = (taskId, columnId) => {
-        axios.delete(config.BASE_URL + 'tasks/' + taskId + '/' + columnId)
+        const headers = getHeaders();
+        axios.delete(config.BASE_URL + 'tasks/' + taskId + '/' + columnId, {headers})
             .then(Response => {
                 let newState = {
                     ...this.state
@@ -231,6 +155,7 @@ class Dashboard extends Component {
                         newState.columns[index] = Response.data.columnResponse;
                         newState.tasks = Response.data.taskResponse;
                     }
+                    return 1;
                 });
                 this.setState(newState);
             })
@@ -249,7 +174,8 @@ class Dashboard extends Component {
         const id = this.state.taskId;
         const taskContent = { content : this.state.taskContent };
         let taskArray = this.state.tasks;
-        axios.put(config.BASE_URL + 'tasks/' + id, taskContent)
+        const headers = getHeaders();
+        axios.put(config.BASE_URL + 'tasks/' + id, taskContent, {headers})
             .then(Response => {
                 this.state.tasks.map((task, index) => {
                     if(task._id === id) {                
@@ -262,6 +188,7 @@ class Dashboard extends Component {
                         };
                         this.setState(newState);        
                     }
+                    return 1;
                 });
             })
             .catch(err => {
@@ -287,24 +214,22 @@ class Dashboard extends Component {
     render() {
         let isData = this.state.isDataLoaded;
         let dragDrop;
-        // console.log('------1-Render-State------');
-        // console.log(this.state);
-        // console.log('-------------------------');
         if(isData) {
             dragDrop = <DragDropContext onDragEnd={this.onDragEnd}>
                 <div className={classes.Container}>
                     {
                         this.state.columnOrder[0].columnOrder.map((col, index) => {
-                            // console.log(col);
                             if(this.state.columns[index]._id === col) {
-                                console.log(`Index : ${index}`)
                                 const column = this.state.columns[index];
-                                console.log(column);
-                                const tasks = column.taskIds.map((taskId, taskIndex) => { 
-                                    console.log(taskIndex);
-                                    console.log(this.state.tasks[taskIndex]);
-                                    console.log('==========================');
-                                    return this.state.tasks[taskIndex] 
+                                let tasks = [];
+                                column.taskIds.map(taskId => {
+                                    this.state.tasks.map(task => {
+                                        if(task._id === taskId) {
+                                            tasks.push(task);
+                                        }
+                                        return 1;
+                                    });  
+                                    return 1;         
                                 });
                                 return <Column 
                                             key={column._id} 
@@ -314,18 +239,9 @@ class Dashboard extends Component {
                                             removed={this.removeTaskHandler}
                                         />;
                             }
+                            return 1;
                         })
                     }
-
-
-                    {/* {this.state.columnOrder.map(columnId => {
-                        const column = this.state.columns[columnId];
-                        console.log('----Column----');
-                        console.log(column);
-                        const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
-                        
-                        return <Column key={column.id} column={column} tasks={tasks} updated={this.updateTask} removed={this.removeTaskHandler} />;
-                    })} */}
                 </div>
                 <div>
                     <button className={classes.AddButton} onClick={this.openModal}> Add Task </button>        

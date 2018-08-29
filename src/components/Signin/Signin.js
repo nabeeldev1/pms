@@ -62,7 +62,6 @@ class Signin extends Component {
         axios.post(config.BASE_URL + 'users', user)
           .then(Response => {
             let userObj = Response.data;
-            delete userObj.password;
             localStorage.setItem('userObj', JSON.stringify(userObj));            
             this.props.history.push('/dashboard');
           })
