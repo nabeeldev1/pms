@@ -160,7 +160,8 @@ class Dashboard extends Component {
                 this.setState(newState);
             })
             .catch(err => {
-                console.log(err);
+                console.log('-----------In-error---------');
+                console.log(err.response.data.message);
             });
     }
     
