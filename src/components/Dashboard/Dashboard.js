@@ -7,6 +7,7 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import config from '../../config';
 import { getHeaders } from '../../Utils/Auth/Auth'; 
+import Snackbar from '../../UI/Snackbar/Snackbar';
 
 const customStyles = {
     content : {
@@ -27,6 +28,8 @@ class Dashboard extends Component {
         this.state.isDataLoaded = false;
         this.state.taskContent = '';
         this.state.taskId = '';
+        this.state.message = '';
+        this.state.snackbarShow = false;
     }
 
     componentDidMount() {
@@ -45,15 +48,15 @@ class Dashboard extends Component {
                             });
                         })
                         .catch(err => {
-                            console.log(err);
+                            this.myFunction(err.response.data.message);
                         });
                 })
                 .catch(err => {
-                    console.log(err);
+                    this.myFunction(err.response.data.message);
                 });
           })
           .catch(err => {
-            console.log(err);
+            this.myFunction(err.response.data.message);
         });
     }
 
@@ -91,7 +94,7 @@ class Dashboard extends Component {
                 this.setState(newState);
             })
             .catch(err => {
-                console.log(err);
+                this.myFunction(err.response.data.message);
             });
     };
 
@@ -121,7 +124,8 @@ class Dashboard extends Component {
                 this.setState(newState);
             })
             .catch(err => {
-                console.log(err);
+                this.setState({ taskContent: '', taskId: '' });
+                this.myFunction(err.response.data.message);
             });
         this.closeModal();
     }
@@ -160,8 +164,7 @@ class Dashboard extends Component {
                 this.setState(newState);
             })
             .catch(err => {
-                console.log('-----------In-error---------');
-                console.log(err.response.data.message);
+                this.myFunction(err.response.data.message);
             });
     }
     
@@ -193,7 +196,8 @@ class Dashboard extends Component {
                 });
             })
             .catch(err => {
-                console.log(err);
+                this.setState({ taskContent: '', taskId: '' });
+                this.myFunction(err.response.data.message);
             });
         this.closeModal();
     }
@@ -210,6 +214,23 @@ class Dashboard extends Component {
         else {
             this.addTask(event);
         }
+    }
+
+    myFunction = (message) => {
+        this.setState({
+            message: message,
+            snackbarShow: true
+        });
+        this.delayState();
+    }
+
+    delayState = () => {
+        setTimeout(() => {
+            this.setState({
+                message: '',
+                snackbarShow: false
+            })
+        }, 3000);
     }
 
     render() {
@@ -244,6 +265,7 @@ class Dashboard extends Component {
                         })
                     }
                 </div>
+                <Snackbar snackbarShow={this.state.snackbarShow} message={this.state.message} />
                 <div>
                     <button className={classes.AddButton} onClick={this.openModal}> Add Task </button>        
                 </div>
